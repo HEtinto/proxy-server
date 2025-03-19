@@ -2,6 +2,13 @@
 
 一个简单的代理程序, 支持 http 和 socks5 代理.
 
+## Linux 设置代理
+
+```shell
+export http_proxy=http://127.0.0.1:10809
+export https_proxy=socks5://172.0.0.1:10808
+```
+
 ## git 设置代理
 
 ```shell
