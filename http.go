@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io"
+	"log"
 	"net"
 	"net/http"
 	"strings"
@@ -11,7 +12,7 @@ import (
 type httpProxy struct{}
 
 func (p *httpProxy) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
-	fmt.Printf("Received request %s %s %s\n", req.Method, req.Host, req.RemoteAddr)
+	log.Printf("Received request %s %s %s\n", req.Method, req.Host, req.RemoteAddr)
 
 	transport := http.DefaultTransport
 
@@ -38,7 +39,7 @@ func (p *httpProxy) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	// 并复制添加到客户端响应的头信息中
 	for key, value := range res.Header {
 		for _, v := range value {
-			fmt.Printf("Header key:%v, value:%v\n", key, v)
+			log.Printf("Header key:%v, value:%v\n", key, v)
 			rw.Header().Add(key, v)
 		}
 	}
@@ -55,7 +56,7 @@ func (p *httpProxy) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 
 func startHttpListen(port string) {
 	listen_addr := fmt.Sprintf(":%s", port)
-	fmt.Printf("Http proxy listen addr:%s\n", listen_addr)
+	log.Printf("Http proxy listen addr:%s\n", listen_addr)
 	http.Handle("/", &httpProxy{})
 	http.ListenAndServe(listen_addr, nil)
 }

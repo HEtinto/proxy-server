@@ -1,8 +1,8 @@
 package main_test
 
 import (
-	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -12,7 +12,7 @@ import (
 func TestCase1(t *testing.T) {
 	proxyUrl, err := url.Parse("http://127.0.0.1:10802")
 	if err != nil {
-		fmt.Printf("Parse proxy address err:%v\n", err)
+		log.Printf("Parse proxy address err:%v\n", err)
 		return
 	}
 	// 创建一个自定义传输配置, 设置代理
@@ -28,36 +28,36 @@ func TestCase1(t *testing.T) {
 	// 2. 创建请求
 	req, err := http.NewRequest("Get", url, nil)
 	if err != nil {
-		fmt.Printf("Create request err:%v", err)
+		log.Printf("Create request err:%v", err)
 		return
 	}
 	// 3.发起请求
 	resp, err := client.Do(req)
 	if err != nil {
-		fmt.Printf("Request err:%v", err)
+		log.Printf("Request err:%v", err)
 	}
 	// 函数结束时关闭响应体
 	defer resp.Body.Close()
 	// 读取响应头
-	fmt.Printf("Rsp header:\n")
+	log.Printf("Rsp header:\n")
 	for k, v := range resp.Header {
-		fmt.Printf("%v : %v\n", k, v)
+		log.Printf("%v : %v\n", k, v)
 	}
 
 	// 读取响应体内容
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Printf("读取响应体出错:%v\n", err)
+		log.Printf("读取响应体出错:%v\n", err)
 		return
 	}
 
 	// 打印响应状态码和内容
-	fmt.Printf("状态码: %d\n", resp.StatusCode)
-	fmt.Printf("响应内容: %s\n", string(body))
+	log.Printf("状态码: %d\n", resp.StatusCode)
+	log.Printf("响应内容: %s\n", string(body))
 }
 
 func TestCase2(t *testing.T) {
 	s := []string{"client", "proxy1", "proxy2"}
 	s1 := strings.Join(s, ", ") + ", " + "172"
-	fmt.Println(s1)
+	log.Println(s1)
 }

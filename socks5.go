@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net"
 )
 
@@ -28,17 +29,17 @@ import (
 
 func startSocks5Listen(port string) {
 	listen_addr := fmt.Sprintf(":%s", port)
-	fmt.Printf("Socks5 proxy listen addr:%s\n", listen_addr)
+	log.Printf("Socks5 proxy listen addr:%s\n", listen_addr)
 	server, err := net.Listen("tcp", listen_addr)
 	if err != nil {
-		fmt.Printf("Listen failed: %v\n", err)
+		log.Printf("Listen failed: %v\n", err)
 		return
 	}
 
 	for {
 		client, err := server.Accept()
 		if err != nil {
-			fmt.Printf("Accept failed: %v\n", err)
+			log.Printf("Accept failed: %v\n", err)
 			continue
 		}
 		go processSocks5(client)
@@ -52,7 +53,7 @@ func startSocks5Listen(port string) {
 func processSocks5(client net.Conn) {
 	// 1. 认证
 	if err := Socks5Auth(client); err != nil {
-		fmt.Println("auth error:", err)
+		log.Println("auth error:", err)
 		client.Close()
 		return
 	}
@@ -60,7 +61,7 @@ func processSocks5(client net.Conn) {
 	// 2. 建立连接
 	target, err := Socks5Connect(client)
 	if err != nil {
-		fmt.Println("connect error:", err)
+		log.Println("connect error:", err)
 		client.Close()
 		return
 	}
@@ -87,7 +88,7 @@ func Socks5Auth(client net.Conn) (err error) {
 	if ver != 5 {
 		return errors.New("invalid version")
 	}
-	fmt.Printf("socket ver:%v, NMETHODS:%v\n", ver, nMethods)
+	log.Printf("socket ver:%v, NMETHODS:%v\n", ver, nMethods)
 
 	// 读取 METHODS 列表
 	n, err = io.ReadFull(client, buf[:nMethods])
@@ -129,7 +130,7 @@ func Socks5Connect(client net.Conn) (net.Conn, error) {
 	if ver != 5 || cmd != 1 {
 		return nil, errors.New("invalid ver/cmd")
 	}
-	fmt.Printf("ver:%v, cmd:%v, atyp:%v\n", ver, cmd, atyp)
+	log.Printf("ver:%v, cmd:%v, atyp:%v\n", ver, cmd, atyp)
 
 	addr := ""
 	switch atyp {
@@ -141,7 +142,7 @@ func Socks5Connect(client net.Conn) (net.Conn, error) {
 			return nil, errors.New("invalid IPv4: " + err.Error())
 		}
 		addr = fmt.Sprintf("%d.%d.%d.%d", buf[0], buf[1], buf[2], buf[3])
-		fmt.Printf("ATYP IPV4 ADDR:%v\n", addr)
+		log.Printf("ATYP IPV4 ADDR:%v\n", addr)
 
 	case 3:
 		// 域名 先读取一个字节 该字节通告域名占n字节大小
@@ -158,7 +159,7 @@ func Socks5Connect(client net.Conn) (net.Conn, error) {
 			return nil, errors.New("invalid hostname: " + err.Error())
 		}
 		addr = string(buf[:addrLen])
-		fmt.Printf("Domain Name Addr:%v\n", addr)
+		log.Printf("Domain Name Addr:%v\n", addr)
 
 	case 4: // IPV6
 		return nil, errors.New("IPv6: no supported yet")
@@ -173,15 +174,15 @@ func Socks5Connect(client net.Conn) (net.Conn, error) {
 		return nil, errors.New("read port: " + err.Error())
 	}
 	port := binary.BigEndian.Uint16(buf[:2])
-	fmt.Printf("port:%v\n", port)
+	log.Printf("port:%v\n", port)
 
 	var destAddrPort string
 	if atyp != 4 {
 		destAddrPort = fmt.Sprintf("%s:%d", addr, port)
-		fmt.Printf("destAddrPort:%v\n", destAddrPort)
+		log.Printf("destAddrPort:%v\n", destAddrPort)
 	} else {
 		destAddrPort = fmt.Sprintf("[%s]:%d", addr, port)
-		fmt.Printf("destAddrPort:%v\n", destAddrPort)
+		log.Printf("destAddrPort:%v\n", destAddrPort)
 	}
 
 	// 与目标地址建立连接
