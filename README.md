@@ -5,8 +5,8 @@
 ## Linux 设置代理
 
 ```shell
-export http_proxy=http://127.0.0.1:10801
-export https_proxy=socks5://172.0.0.1:10802
+export http_proxy=http://127.0.0.1:10802
+export https_proxy=socks5://172.0.0.1:10801
 ```
 
 ## git 设置代理
