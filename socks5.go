@@ -95,6 +95,7 @@ func Socks5Auth(client net.Conn) (err error) {
 	if n != nMethods {
 		return errors.New("reading methods: " + err.Error())
 	}
+	log.Printf("socket methods:%v\n", buf[:nMethods])
 
 	// 设置认证方式 这里使用 00 表示不需要认证
 	// * X`00` NO AUTHENTICATION REQUIRED
