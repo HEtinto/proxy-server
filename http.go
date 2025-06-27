@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io"
 	"log"
 	"net"
@@ -11,11 +10,10 @@ import (
 
 type httpProxy struct{}
 
-func StartHttpListen(port string) {
-	listen_addr := fmt.Sprintf(":%s", port)
-	log.Printf("Http proxy listen addr:%s\n", listen_addr)
+func StartHttpListen(address string) {
+	log.Printf("Http proxy listen addr %s\n", address)
 	http.Handle("/", &httpProxy{})
-	http.ListenAndServe(listen_addr, nil)
+	http.ListenAndServe(address, nil)
 }
 
 func (p *httpProxy) ServeHTTP(rw http.ResponseWriter, req *http.Request) {

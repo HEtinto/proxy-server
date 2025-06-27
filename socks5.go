@@ -27,10 +27,9 @@ import (
 // +---+---+-----+----+--------+--------+
 // (4). 得到目标地址后, 服务端即可向目标发起连接, 转发目标数据
 
-func StartSocks5Listen(port string) {
-	listen_addr := fmt.Sprintf(":%s", port)
-	log.Printf("Socks5 proxy listen addr:%s\n", listen_addr)
-	server, err := net.Listen("tcp", listen_addr)
+func StartSocks5Listen(address string) {
+	log.Printf("Socks5 proxy listen addr %s\n", address)
+	server, err := net.Listen("tcp", address)
 	if err != nil {
 		log.Printf("Listen failed: %v\n", err)
 		return

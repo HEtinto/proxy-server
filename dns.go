@@ -8,11 +8,11 @@ import (
 	"github.com/miekg/dns"
 )
 
-func StartDNSServer() {
+func StartDNSServer(address string) {
 	dns.HandleFunc(".", handleDNSRequest)
 
-	log.Println("Starting dns server on :53")
-	server := &dns.Server{Addr: ":53", Net: "udp"}
+	log.Println("Starting dns server on ", address)
+	server := &dns.Server{Addr: address, Net: "udp"}
 	err := server.ListenAndServe()
 	if err != nil {
 		log.Printf("Failed to start server: %s\n", err.Error())

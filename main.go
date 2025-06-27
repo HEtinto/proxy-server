@@ -13,29 +13,29 @@ import (
 // 其中--socks5-hostname参数指定使用socks5代理
 
 var (
-	httpListenAddress   string // http监听地址
-	socks5ListenAddress string // socks5监听地址
-	dnsListenAddress    string // dns监听地址
+	HttpListenAddress   string // http监听地址
+	Socks5ListenAddress string // socks5监听地址
+	DNSListenAddress    string // dns监听地址
 )
 
 func init() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	// 定义命令行参数
-	flag.StringVar(&httpListenAddress, "http", ":10802", "http listen address")
-	flag.StringVar(&socks5ListenAddress, "socks5", ":10801", "socks5 listen address")
-	flag.StringVar(&dnsListenAddress, "dns", ":53", "dns listen address")
+	flag.StringVar(&HttpListenAddress, "http", ":10802", "http listen address")
+	flag.StringVar(&Socks5ListenAddress, "socks5", ":10801", "socks5 listen address")
+	flag.StringVar(&DNSListenAddress, "dns", ":53", "dns listen address")
 	// 解析命令行参数
 	flag.Parse()
 	log.Printf("Init...(Use --help to get more information)\n")
-	log.Printf("http listen address:%s\n", httpListenAddress)
-	log.Printf("socks5 listen address:%s\n", socks5ListenAddress)
-	log.Printf("dns listen address:%s\n", dnsListenAddress)
+	log.Printf("http listen address:%s\n", HttpListenAddress)
+	log.Printf("socks5 listen address:%s\n", Socks5ListenAddress)
+	log.Printf("dns listen address:%s\n", DNSListenAddress)
 	log.Printf("Init done.\n")
 }
 
 func main() {
-	go StartDNSServer()
-	go StartSocks5Listen("10801")
-	go StartHttpListen("10802")
+	go StartDNSServer(DNSListenAddress)
+	go StartSocks5Listen(Socks5ListenAddress)
+	go StartHttpListen(HttpListenAddress)
 	select {}
 }
