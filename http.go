@@ -11,6 +11,13 @@ import (
 
 type httpProxy struct{}
 
+func StartHttpListen(port string) {
+	listen_addr := fmt.Sprintf(":%s", port)
+	log.Printf("Http proxy listen addr:%s\n", listen_addr)
+	http.Handle("/", &httpProxy{})
+	http.ListenAndServe(listen_addr, nil)
+}
+
 func (p *httpProxy) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	log.Printf("Received request %s %s %s\n", req.Method, req.Host, req.RemoteAddr)
 
@@ -52,11 +59,4 @@ func (p *httpProxy) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	io.Copy(rw, res.Body)
 
 	res.Body.Close()
-}
-
-func startHttpListen(port string) {
-	listen_addr := fmt.Sprintf(":%s", port)
-	log.Printf("Http proxy listen addr:%s\n", listen_addr)
-	http.Handle("/", &httpProxy{})
-	http.ListenAndServe(listen_addr, nil)
 }

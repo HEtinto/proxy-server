@@ -1,12 +1,14 @@
 package main_test
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"net/url"
-	"strings"
 	"testing"
+
+	"github.com/miekg/dns"
 )
 
 func TestCase1(t *testing.T) {
@@ -56,8 +58,38 @@ func TestCase1(t *testing.T) {
 	log.Printf("响应内容: %s\n", string(body))
 }
 
-func TestCase2(t *testing.T) {
-	s := []string{"client", "proxy1", "proxy2"}
-	s1 := strings.Join(s, ", ") + ", " + "172"
-	log.Println(s1)
+func QueryDNSTypeA(domain string) (string, error) {
+	c := &dns.Client{}
+	m := &dns.Msg{}
+	m.SetQuestion(dns.Fqdn(domain), dns.TypeA)
+	m.RecursionDesired = true
+
+	r, _, err := c.Exchange(m, "8.8.8.8:53")
+	if err != nil {
+		return "", err
+	}
+
+	if r.Rcode != dns.RcodeSuccess || len(r.Answer) == 0 {
+		return "", fmt.Errorf("no A record found for %s", domain)
+	}
+
+	fmt.Printf("r:%+v", r)
+
+	// 类型断言确保记录是 A 类型
+	if a, ok := r.Answer[0].(*dns.A); ok {
+		return a.A.String(), nil // 返回 IP 地址（如 "93.184.216.34"）
+	}
+
+	return r.Answer[0].String(), nil // 兜底：返回原始记录字符串
+}
+
+func TestCase3(t *testing.T) {
+	// 1. 定义域名
+	domain := "www.baidu.com"
+	// 2. 调用 QueryDNS 函数 查询
+	addr, err := QueryDNSTypeA(domain)
+	if err != nil {
+		log.Println(err)
+	}
+	log.Printf("%s resolved to %s\n", domain, addr)
 }
