@@ -2,8 +2,6 @@
 
 echo "==============="
 echo -n "Building..."
-go build -o proxy.exe
-echo "Building done"
-echo "Running..."
+go build -ldflags="-s -w" -o proxy.exe
+echo "Building done."
 echo "==============="
-./proxy.exe
