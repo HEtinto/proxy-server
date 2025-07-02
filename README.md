@@ -20,8 +20,8 @@ export https_proxy=socks5://xxx.xxx.xxx.xxx:10801
 ### git 设置代理
 
 ```shell
-git config --global http.proxy "xxx"
-git config --global https.proxy "xxx"
+git config --global http.proxy "http://xxx.xxx.xxx.xxx:10802"
+git config --global https.proxy "socks5://xxx.xxx.xxx.xxx:10801"
 ```
 
 ### git 设置免密
