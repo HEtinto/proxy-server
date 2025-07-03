@@ -2,8 +2,8 @@
 
 echo "==============="
 echo -n "Building..."
-go build -o proxy.exe
+go build -o proxy-server.exe
 echo "Building done"
 echo "Running..."
 echo "==============="
-./proxy.exe
+./proxy-server.exe
