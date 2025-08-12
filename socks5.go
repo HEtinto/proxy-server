@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net"
+	"strconv"
 )
 
 // 过程(参考: RFC1928 SOCKS Protocol Version 5)
@@ -85,7 +86,7 @@ func Socks5Auth(client net.Conn) (err error) {
 
 	ver, nMethods := int(buf[0]), int(buf[1])
 	if ver != 5 {
-		return errors.New("invalid version")
+		return errors.New("invalid version: " + strconv.Itoa(ver))
 	}
 	log.Printf("socket ver:%v, NMETHODS:%v\n", ver, nMethods)
 
